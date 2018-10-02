@@ -22,8 +22,8 @@ install:
   - sudo apt install rocm-dkms
 
 before_script:
-  - docker pull kiritigowda/mivision
-  - docker run -it -d --name mivision --network host kiritigowda/mivision bash
+  - docker pull kiritigowda/mivision-test-docker
+  - docker run -it -d --name mivision --network host kiritigowda/mivision-test-docker bash
   - docker cp ../amdovx-modules mivision:/amdovx-modules
 
 script:
