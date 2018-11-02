@@ -18,11 +18,13 @@
 #include <sstream>
 #include <QElapsedTimer>
 
-#define WINDOW_TITLE             "MIVision Viewer"
+#define WINDOW_TITLE             "Radeon MIVision Viewer"
 #define ICON_SIZE                64
 #define ICON_STRIDE              (ICON_SIZE + 8)
 #define INFCOM_RUNTIME_OPTIONS   ""
 #define HIERARCHY_PENALTY        0.2
+
+QString GPUNameString[4] = {"Radeon Instinct", "Radeon Instinct MI25", "Radeon Instinct MI60", "Radeon GPU"};
 
 inference_state::inference_state()
 {
@@ -74,7 +76,7 @@ inference_state::inference_state()
 inference_viewer::inference_viewer(QString serverHost, int serverPort, QString modelName,
         QVector<QString> * dataLabels, QVector<QString> * dataHierarchy, QString dataFilename, QString dataFolder,
         int dimInput[3], int GPUs, int dimOutput[3], int maxImageDataSize,
-        bool repeat_images, bool sendScaledImages, int sendFileName_, int topKValue,
+        bool repeat_images, bool sendScaledImages, int sendFileName_, int topKValue, int GPUNameIndex,
         QWidget *parent) :
     QWidget(parent),
     ui(new Ui::inference_viewer),
@@ -99,6 +101,7 @@ inference_viewer::inference_viewer(QString serverHost, int serverPort, QString m
     state->sendScaledImages = sendScaledImages;
     state->sendFileName = sendFileName_;
     state->topKValue = topKValue;
+    state->GPUNameIndex = GPUNameIndex;
     progress.completed = false;
     progress.errorCode = 0;
     progress.repeat_images = repeat_images;
@@ -169,6 +172,7 @@ void inference_viewer::terminate()
             QThread::msleep(100);
         }
     }
+    state->performance.close();
     close();
 }
 
@@ -177,6 +181,7 @@ void inference_viewer::showPerfResults()
     state->performance.setModelName(state->modelName);
     //state->performance.setStartTime(state->startTime);
     state->performance.setNumGPU(state->GPUs);
+    state->performance.setGPUName(GPUNameString[state->GPUNameIndex]);
     state->performance.show();
 
 }
@@ -737,8 +742,8 @@ void inference_viewer::paintEvent(QPaintEvent *)
 {
     // configuration
     int imageCountLimitForInferenceStart = std::min(state->imageDataSize, state->imageDataStartOffset);
-    const int loadBatchSize = 60;
-    const int scaleBatchSize = 30;
+    const int loadBatchSize = 128;
+    const int scaleBatchSize = 64;
 
     // calculate window layout
     QString exitButtonText = " Close ";
@@ -1098,7 +1103,7 @@ void inference_viewer::paintEvent(QPaintEvent *)
             }
             if(enableImageDraw) {
                 painter.drawPixmap(x, y, w, h, state->imagePixmap[index]);
-                if(state->imageLabel[index] >= 0) {
+                if(state->imageLabel[index] >= 0 && 0) {
                     int cx = x + w, cy = y + h;
                     if(state->inferenceResultTop[index] == state->imageLabel[index]) {
                         painter.setPen(Qt::green);

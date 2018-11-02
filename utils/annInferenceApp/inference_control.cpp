@@ -28,7 +28,7 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     : QWidget(parent), connectionSuccessful{ false }, modelType{ 0 }, numModelTypes{ 0 }, dataLabels{ nullptr }, dataHierarchy{ nullptr },
       lastPreprocessMpy{ "1", "1", "1" }, lastPreprocessAdd{ "0", "0", "0" }
 {
-    setWindowTitle("MIVision Client Application");
+    setWindowTitle("Radeon MIVision Client Application");
     setMinimumWidth(800);
 
     maxGPUs = 1;
@@ -36,6 +36,7 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     sendFileName = 0;
     enableTopK = 0;
     topKValue = 0;
+    GPUNameIndex = 0;
     compiler_status.completed = false;
     compiler_status.dimOutput[0] = 0;
     compiler_status.dimOutput[1] = 0;
@@ -311,6 +312,14 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     controlLayout->addWidget(labelMaxGPUs, row, 2, 1, 1);
     controlLayout->addWidget(buttonInference, row, 1 + editSpan, 1, 1);
     connect(buttonInference, SIGNAL(released()), this, SLOT(runInference()));
+    row++;
+    QLabel * labelGPUName = new QLabel("Server GPU:");
+    labelGPUName->setStyleSheet("font-weight: bold; font-style: italic; font-size: 15pt;");
+    labelGPUName->setAlignment(Qt::AlignLeft);
+    controlLayout->addWidget(labelGPUName, row, 0, 1, 1);
+    comboGPUName = new QComboBox();
+    comboGPUName->addItems({ "Radeon Instinct", "Radeon Instinct MI25", "Radeon Instinct MI60", "Radeon GPU"});
+    controlLayout->addWidget(comboGPUName, row, 1, 1, 1);
     row++;
     QLabel * labelImageLabelsFile = new QLabel("Labels:");
     editImageLabelsFile = new QLineEdit("");
@@ -1043,6 +1052,8 @@ void inference_control::runInference()
     if(enableTopK)
         topKValue = ( comboTopKResult->currentIndex() + 1 );
 
+    GPUNameIndex = comboGPUName->currentIndex();
+
     inference_panel *display_panel = new inference_panel;
     display_panel->setWindowIcon(QIcon(":/images/vega_icon_150.png"));
     //display_panel->show();
@@ -1050,7 +1061,8 @@ void inference_control::runInference()
     inference_viewer * viewer = new inference_viewer(
                 editServerHost->text(), editServerPort->text().toInt(), modelName,
                 dataLabels, dataHierarchy, editImageListFile->text(), editImageFolder->text(),
-                dimInput, editGPUs->text().toInt(), dimOutput, maxDataSize, repeat_images, sendScaledImages, sendFileName, topKValue);
+                dimInput, editGPUs->text().toInt(), dimOutput, maxDataSize, repeat_images,
+                sendScaledImages, sendFileName, topKValue, GPUNameIndex);
     viewer->setWindowIcon(QIcon(":/images/vega_icon_150.png"));
     viewer->show();
     close();

@@ -23,6 +23,7 @@ private:
 public slots:
      void closePerformanceView();
      void setModelName(QString ModelName);
+     void setGPUName(QString GPUName);
      void setNumGPU(int numGPU);
      void updateFPSValue(float fps);
 };

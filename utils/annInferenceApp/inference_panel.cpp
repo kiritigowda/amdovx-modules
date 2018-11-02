@@ -23,6 +23,10 @@ void inference_panel::setModelName(QString ModelName)
 {
    ui->modelName_label->setText(ModelName);
 }
+void inference_panel::setGPUName(QString GPUName)
+{
+   ui->GPUName_label->setText(GPUName);
+}
 void inference_panel::setNumGPU(int numGPU)
 {
    ui->GPU_lcdNumber->display(numGPU);

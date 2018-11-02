@@ -85,6 +85,7 @@ private:
     QComboBox * comboInvertInputChannels;
     QComboBox * comboPublishOptions;
     QComboBox * comboTopKResult;
+    QComboBox * comboGPUName;
     QLineEdit * editModelName;
     QPushButton * buttonModelFile1;
     QPushButton * buttonModelFile2;
@@ -121,6 +122,7 @@ private:
     int sendFileName;
     int enableTopK;
     int topKValue;
+    int GPUNameIndex;
     QVector<QString> * dataLabels;
     QVector<QString> * dataHierarchy;
     QVector<QString> typeModelFile1Label;
