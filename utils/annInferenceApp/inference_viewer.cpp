@@ -1072,7 +1072,7 @@ void inference_viewer::paintEvent(QPaintEvent *)
             int w = ICON_SIZE / 4;
             int h = ICON_SIZE / 4;
             bool enableImageDraw = false;
-            bool enableZoomInEffect = true;
+            bool enableZoomInEffect = false;
             if(!progress.repeat_images)
                 enableZoomInEffect = false;
             else if(imageCount < (numCols * numRows * 3 / 4))
@@ -1158,7 +1158,7 @@ void inference_viewer::paintEvent(QPaintEvent *)
     QFont font = state->statusBarFont;
     font.setBold(true);
     font.setItalic(false);
-    if(state->mouseSelectedImage >= 0) {
+    if(state->mouseSelectedImage >= 0 && 0) {
         int index = state->mouseSelectedImage;
         int truthLabel = state->imageLabel[index];
         QString truthSummary = "";
