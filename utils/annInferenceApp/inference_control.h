@@ -86,6 +86,8 @@ private:
     QComboBox * comboPublishOptions;
     QComboBox * comboTopKResult;
     QComboBox * comboGPUName;
+    QComboBox * comboCPUName;
+    QComboBox * comboCPUCores;
     QLineEdit * editModelName;
     QPushButton * buttonModelFile1;
     QPushButton * buttonModelFile2;
@@ -123,6 +125,8 @@ private:
     int enableTopK;
     int topKValue;
     int GPUNameIndex;
+    int CPUNameIndex;
+    int CPUCoresIndex;
     QVector<QString> * dataLabels;
     QVector<QString> * dataHierarchy;
     QVector<QString> typeModelFile1Label;

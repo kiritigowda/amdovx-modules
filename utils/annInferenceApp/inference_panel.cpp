@@ -31,6 +31,14 @@ void inference_panel::setNumGPU(int numGPU)
 {
    ui->GPU_lcdNumber->display(numGPU);
 }
+void inference_panel::setCPUName(QString CPUName)
+{
+   ui->CPUName_label->setText(CPUName);
+}
+void inference_panel::setNumCPU(int numCPU)
+{
+   ui->CPU_lcdNumber->display(numCPU);
+}
 void inference_panel::updateFPSValue(float fps)
 {
     int fps_value = int(fps);

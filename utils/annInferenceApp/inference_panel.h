@@ -25,6 +25,8 @@ public slots:
      void setModelName(QString ModelName);
      void setGPUName(QString GPUName);
      void setNumGPU(int numGPU);
+     void setCPUName(QString CPUName);
+     void setNumCPU(int numCPU);
      void updateFPSValue(float fps);
 };
 

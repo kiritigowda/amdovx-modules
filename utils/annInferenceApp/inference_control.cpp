@@ -37,6 +37,8 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     enableTopK = 0;
     topKValue = 0;
     GPUNameIndex = 0;
+    CPUCoresIndex = 0;
+    CPUNameIndex = 0;
     compiler_status.completed = false;
     compiler_status.dimOutput[0] = 0;
     compiler_status.dimOutput[1] = 0;
@@ -298,11 +300,13 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     comboTopKResult->setEnabled(false);
     controlLayout->addWidget(comboTopKResult, row, 1, 1, 1);
     connect(checkTopKResult, SIGNAL(clicked(bool)), this, SLOT(topKResultsEnable(bool)));
+    buttonInference = new QPushButton("Run");
+    controlLayout->addWidget(buttonInference, row, 1 + editSpan, 1, 1);
+    connect(buttonInference, SIGNAL(released()), this, SLOT(runInference()));
     row++;
     QLabel * labelGPUs = new QLabel("GPUs:");
     editGPUs = new QLineEdit("1");
     labelMaxGPUs = new QLabel("");
-    buttonInference = new QPushButton("Run");
     editGPUs->setValidator(new QIntValidator(1,maxGPUs));
     editGPUs->setEnabled(false);
     labelGPUs->setStyleSheet("font-weight: bold; font-style: italic; font-size: 15pt;");
@@ -310,8 +314,6 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     controlLayout->addWidget(labelGPUs, row, 0, 1, 1);
     controlLayout->addWidget(editGPUs, row, 1, 1, 1);
     controlLayout->addWidget(labelMaxGPUs, row, 2, 1, 1);
-    controlLayout->addWidget(buttonInference, row, 1 + editSpan, 1, 1);
-    connect(buttonInference, SIGNAL(released()), this, SLOT(runInference()));
     row++;
     QLabel * labelGPUName = new QLabel("Server GPU:");
     labelGPUName->setStyleSheet("font-weight: bold; font-style: italic; font-size: 15pt;");
@@ -320,6 +322,22 @@ inference_control::inference_control(int operationMode_, QWidget *parent)
     comboGPUName = new QComboBox();
     comboGPUName->addItems({ "Radeon Instinct", "Radeon Instinct MI25", "Radeon Instinct MI60", "Radeon GPU"});
     controlLayout->addWidget(comboGPUName, row, 1, 1, 1);
+    row++;
+    QLabel * labelCPUName = new QLabel("Server CPU:");
+    labelCPUName->setStyleSheet("font-weight: bold; font-style: italic; font-size: 15pt;");
+    labelCPUName->setAlignment(Qt::AlignLeft);
+    controlLayout->addWidget(labelCPUName, row, 0, 1, 1);
+    comboCPUName = new QComboBox();
+    comboCPUName->addItems({ "Authentic AMD", "AMD EPYC \"NAPLES\"", "AMD EPYC \"ROME\"", "AMD Ryzen 7", "AMD Ryzen 5"});
+    controlLayout->addWidget(comboCPUName, row, 1, 1, 1);
+    row++;
+    QLabel * labelCPUCores = new QLabel("Server CPU Cores:");
+    labelCPUCores->setStyleSheet("font-weight: bold; font-style: italic; font-size: 15pt;");
+    labelCPUCores->setAlignment(Qt::AlignLeft);
+    controlLayout->addWidget(labelCPUCores, row, 0, 1, 1);
+    comboCPUCores = new QComboBox();
+    comboCPUCores->addItems({ "1","2", "4", "8", "16", "32","64"});
+    controlLayout->addWidget(comboCPUCores, row, 1, 1, 1);
     row++;
     QLabel * labelImageLabelsFile = new QLabel("Labels:");
     editImageLabelsFile = new QLineEdit("");
@@ -1053,6 +1071,8 @@ void inference_control::runInference()
         topKValue = ( comboTopKResult->currentIndex() + 1 );
 
     GPUNameIndex = comboGPUName->currentIndex();
+    CPUNameIndex = comboCPUName->currentIndex();
+    CPUCoresIndex = comboCPUCores->currentIndex();
 
     inference_panel *display_panel = new inference_panel;
     display_panel->setWindowIcon(QIcon(":/images/vega_icon_150.png"));
@@ -1062,7 +1082,7 @@ void inference_control::runInference()
                 editServerHost->text(), editServerPort->text().toInt(), modelName,
                 dataLabels, dataHierarchy, editImageListFile->text(), editImageFolder->text(),
                 dimInput, editGPUs->text().toInt(), dimOutput, maxDataSize, repeat_images,
-                sendScaledImages, sendFileName, topKValue, GPUNameIndex);
+                sendScaledImages, sendFileName, topKValue, GPUNameIndex, CPUNameIndex, CPUCoresIndex);
     viewer->setWindowIcon(QIcon(":/images/vega_icon_150.png"));
     viewer->show();
     close();

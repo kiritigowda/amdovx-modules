@@ -72,6 +72,8 @@ public:
     int sendFileName;
     int topKValue;
     int GPUNameIndex;
+    int CPUNameIndex;
+    int CPUCoresIndex;
     //test summary
     int top1Count,top2Count,top3Count,top4Count,top5Count;
     int topKPassFail[100][2];
@@ -100,7 +102,8 @@ public:
             QVector<QString> * dataLabels, QVector<QString> * dataHierarchy,
             QString dataFilename, QString dataFolder,
             int dimInput[3], int GPUs, int dimOutput[3], int maxImageDataSize,
-            bool repeat_images, bool sendScaledImages, int enableSF, int topKValue,int GPUNameIndex,
+            bool repeat_images, bool sendScaledImages, int enableSF, int topKValue,
+            int GPUNameIndex, int CPUNameIndex, int CPUCoresIndex,
             QWidget *parent = 0);
     ~inference_viewer();
 
