@@ -175,7 +175,7 @@ void inference_viewer::terminate()
 void inference_viewer::showPerfResults()
 {
     state->performance.setModelName(state->modelName);
-    state->performance.setStartTime(state->startTime);
+    //state->performance.setStartTime(state->startTime);
     state->performance.setNumGPU(state->GPUs);
     state->performance.show();
 
@@ -927,7 +927,8 @@ void inference_viewer::paintEvent(QPaintEvent *)
         painter.drawRect(state->statusBarRect);
         if(progress.repeat_images) {
             QString text;
-            text.sprintf("Cycling through %d images from the image list [processed %d images]", state->imagePixmapCount, progress.images_received);
+            //text.sprintf("Cycling through %d images from the image list [processed %d images]", state->imagePixmapCount, progress.images_received);
+            text.sprintf("Cycling through %d images from the image list", state->imagePixmapCount);
             statusText += text;
         }
         else if (progress.completed) {
@@ -1018,13 +1019,13 @@ void inference_viewer::paintEvent(QPaintEvent *)
         int E_hours = (E_secs / 3600);
         E_secs = E_secs % 60;
         state->elapsedTime.sprintf("%d:%d:%d",E_hours,E_mins,E_secs);
-        state->performance.updateElapsedTime(state->elapsedTime);
+        //state->performance.updateElapsedTime(state->elapsedTime);
         state->performance.updateFPSValue(imagesPerSec);
-        state->performance.updateTotalImagesValue(progress.images_received);
+        //state->performance.updateTotalImagesValue(progress.images_received);
         if(imagesPerSec > 0) {
-            QString text;
-            text.sprintf("... %.1f images/sec", imagesPerSec);
-            statusText += text;
+            //QString text;
+            //text.sprintf("... %.1f images/sec", imagesPerSec);
+            //statusText += text;
         }
     }
 

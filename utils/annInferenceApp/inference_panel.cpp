@@ -7,17 +7,29 @@ inference_panel::inference_panel(QWidget *parent) :
 {
     ui->setupUi(this);
     display_panel.setWindowIcon(QIcon(":/images/vega_icon_150.png"));
-    connect(ui->viewGraph_pushButton, &QAbstractButton::clicked, this, &inference_panel::viewPerformanceGraph);
+    connect(ui->close_pushButton, &QAbstractButton::clicked, this, &inference_panel::closePerformanceView);
+
 }
 
 inference_panel::~inference_panel()
 {
     delete ui;
 }
-
-void inference_panel::viewPerformanceGraph()
+void inference_panel::closePerformanceView()
 {
-    display_panel.show();
+   this->close();
 }
+void inference_panel::setModelName(QString ModelName)
+{
+   ui->modelName_label->setText(ModelName);
+}
+void inference_panel::setNumGPU(int numGPU)
+{
+   ui->GPU_lcdNumber->display(numGPU);
+}
+void inference_panel::updateFPSValue(float fps)
+{
+    int fps_value = int(fps);
+    ui->progressBar->setValue(fps_value);
 
-
+}

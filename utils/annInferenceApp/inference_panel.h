@@ -21,7 +21,10 @@ private:
     perf_graph display_panel;
 
 public slots:
-     void viewPerformanceGraph();
+     void closePerformanceView();
+     void setModelName(QString ModelName);
+     void setNumGPU(int numGPU);
+     void updateFPSValue(float fps);
 };
 
 #endif // INFERENCE_PANEL_H

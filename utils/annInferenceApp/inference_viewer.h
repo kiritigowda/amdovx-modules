@@ -3,6 +3,7 @@
 
 #include "inference_receiver.h"
 #include "perf_graph.h"
+#include "inference_panel.h"
 #include <QWidget>
 #include <QFont>
 #include <QThread>
@@ -82,7 +83,8 @@ public:
     // performance results
     QRect perfButtonRect;
     bool perfButtonPressed;
-    perf_graph performance;
+    //perf_graph performance;
+    inference_panel performance;
     QString startTime;
     QElapsedTimer timerElapsed;
     QString elapsedTime;
