@@ -42,36 +42,37 @@ static vx_status VX_CALLBACK validateScaleLayer(vx_node node, const vx_reference
     vx_size input_dims[4], output_dims[4];
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[0], VX_TENSOR_NUMBER_OF_DIMS, &num_dims, sizeof(num_dims)));
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[0], VX_TENSOR_DATA_TYPE, &type, sizeof(type)));
-    if (num_dims != 4) return VX_ERROR_INVALID_DIMENSION;
-    if (type != VX_TYPE_FLOAT32) return VX_ERROR_INVALID_TYPE;
+    if (num_dims != 4) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: #0 num_dims=%ld (must be 4)\n", num_dims);
+    if (type != VX_TYPE_FLOAT32) return ERRMSG(VX_ERROR_INVALID_TYPE, "validate: scale: #0 tensor type=%d (not float)\n", type);
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[0], VX_TENSOR_DIMS, input_dims, sizeof(input_dims)));
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[3], VX_TENSOR_NUMBER_OF_DIMS, &num_dims, sizeof(num_dims)));
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[3], VX_TENSOR_DATA_TYPE, &type, sizeof(type)));
-    if (num_dims != 4) return VX_ERROR_INVALID_DIMENSION;
-    if (type != VX_TYPE_FLOAT32) return VX_ERROR_INVALID_TYPE;
+    if (num_dims != 4) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: #3 num_dims=%ld (must be 4)\n", num_dims);
+    if (type != VX_TYPE_FLOAT32) return ERRMSG(VX_ERROR_INVALID_TYPE, "validate: scale: #3 tensor type=%d (not float)\n", type);
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[3], VX_TENSOR_DIMS, output_dims, sizeof(output_dims)));
-    if (output_dims[3] != input_dims[3]) return VX_ERROR_INVALID_DIMENSION;
-    if (output_dims[2] != input_dims[2]) return VX_ERROR_INVALID_DIMENSION;
-    if (output_dims[1] != input_dims[1]) return VX_ERROR_INVALID_DIMENSION;
-    if (output_dims[0] != input_dims[0]) return VX_ERROR_INVALID_DIMENSION;
+    if (output_dims[3] != input_dims[3] || output_dims[2] != input_dims[2] ||
+        output_dims[1] != input_dims[1] || output_dims[0] != input_dims[0])
+        return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: dims input[%ld,%ld,%ld,%ld] != output[%ld,%ld,%ld,%ld]\n",
+                    input_dims[0], input_dims[1], input_dims[2], input_dims[3],
+                    output_dims[0], output_dims[1], output_dims[2], output_dims[3]);
 
     if (parameters[2]) {
         ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_NUMBER_OF_DIMS, &num_dims, sizeof(num_dims)));
         ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_DATA_TYPE, &type, sizeof(type)));
-        if (num_dims != 1) return VX_ERROR_INVALID_DIMENSION;
-        if (type != VX_TYPE_FLOAT32) return VX_ERROR_INVALID_TYPE;
-        vx_size bias_dims[1];
-        ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_DIMS, bias_dims, sizeof(bias_dims)));
-        if (bias_dims[0] != input_dims[2]) return VX_ERROR_INVALID_DIMENSION;
+        if(num_dims != 1 && num_dims != 2) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: #2 num_dims=%ld (must be 1 or 2)\n", num_dims);
+        if(type != VX_TYPE_FLOAT32) return ERRMSG(VX_ERROR_INVALID_TYPE, "validate: scale: #2 type=%d (must be float)\n", type);
+        vx_size bias_dims[2] = { 0, 1 };
+        ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_DIMS, &bias_dims[2-num_dims], num_dims * sizeof(vx_size)));
+        if (bias_dims[0] != input_dims[2]) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: bias[%ld] input_dims[%ldx%ldx%ldx%ld]\n", bias_dims[0], input_dims[3], input_dims[2], input_dims[1], input_dims[0]);
     }
 
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[1], VX_TENSOR_NUMBER_OF_DIMS, &num_dims, sizeof(num_dims)));
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[1], VX_TENSOR_DATA_TYPE, &type, sizeof(type)));
-    if (num_dims != 1) return VX_ERROR_INVALID_DIMENSION;
-    if (type != VX_TYPE_FLOAT32) return VX_ERROR_INVALID_TYPE;
-    vx_size scale_dims[1];
-    ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[1], VX_TENSOR_DIMS, scale_dims, sizeof(scale_dims)));
-    if (scale_dims[0] != input_dims[2]) return VX_ERROR_INVALID_DIMENSION;
+    if(num_dims != 1 && num_dims != 2) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: #1 num_dims=%ld (must be 1 or 2)\n", num_dims);
+    if(type != VX_TYPE_FLOAT32) return ERRMSG(VX_ERROR_INVALID_TYPE, "validate: scale: #1 type=%d (must be float)\n", type);
+    vx_size scale_dims[2] = { 0, 1 };
+    ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[1], VX_TENSOR_DIMS, &scale_dims[2-num_dims], num_dims*sizeof(vx_size)));
+    if (scale_dims[0] != input_dims[2]) return ERRMSG(VX_ERROR_INVALID_DIMENSION, "validate: scale: scale[%ld] input_dims[%ldx%ldx%ldx%ld]\n", scale_dims[0], input_dims[3], input_dims[2], input_dims[1], input_dims[0]);
 
     //output tensor configuration.
     type = VX_TYPE_FLOAT32;
@@ -88,6 +89,9 @@ static vx_status VX_CALLBACK processScaleLayer(vx_node node, const vx_reference 
     ScaleLayerLocalData * data = NULL;
     ERROR_CHECK_STATUS(vxQueryNode(node, VX_NODE_LOCAL_DATA_PTR, &data, sizeof(data)));
     miopenHandle_t miopenHandle = data->handle->miopen_handle;
+
+    ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[0], VX_TENSOR_BUFFER_OPENCL, &data->input_mem, sizeof(data->input_mem)));
+    ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[3], VX_TENSOR_BUFFER_OPENCL, &data->output_mem, sizeof(data->output_mem)));
 
     //miopen batch norm inference is combined for scale and  batchnorm. Scale is batchnorm withe null tensors for mean and variance.
     ERROR_CHECK_MIOPEN_STATUS(miopenBatchNormalizationForwardInference(miopenHandle, miopenBNSpatial, &data->alpha, &data->beta, data->input_desc, data->input_mem,
@@ -119,7 +123,19 @@ static vx_status VX_CALLBACK initializeScaleLayer(vx_node node, const vx_referen
     //input and output memory.
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[0], VX_TENSOR_BUFFER_OPENCL, &data->input_mem, sizeof(data->input_mem)));
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[1], VX_TENSOR_BUFFER_OPENCL, &data->bnScale, sizeof(data->bnScale)));
-    ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_BUFFER_OPENCL, &data->bnBias, sizeof(data->bnBias)));
+    if(parameters[2]){
+        ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[2], VX_TENSOR_BUFFER_OPENCL, &data->bnBias, sizeof(data->bnBias)));
+    }
+    else{
+        vx_context   vxContext = vxGetContext((vx_reference)node);
+        cl_context context;
+        ERROR_CHECK_STATUS(vxQueryContext(vxContext, VX_CONTEXT_ATTRIBUTE_AMD_OPENCL_CONTEXT, &context, sizeof(context)));
+        cl_float pattern = 0; cl_int err = 0;
+        data->bnBias = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(float)*input_dims[2], NULL, &err);
+        if (err) return VX_FAILURE;
+        err = clEnqueueFillBuffer(data->handle->cmdq, data->bnBias, &pattern, sizeof(cl_float), 0, input_dims[2], 0, NULL, NULL);
+        if (err) return VX_FAILURE;
+    }
     ERROR_CHECK_STATUS(vxQueryTensor((vx_tensor)parameters[3], VX_TENSOR_BUFFER_OPENCL, &data->output_mem, sizeof(data->output_mem)));
 
 #if ENABLE_DEBUG_PRINT_DIMS
@@ -136,10 +152,16 @@ static vx_status VX_CALLBACK uninitializeScaleLayer(vx_node node, const vx_refer
 {
     ScaleLayerLocalData * data = NULL;
     ERROR_CHECK_STATUS(vxQueryNode(node, VX_NODE_LOCAL_DATA_PTR, &data, sizeof(data)));
-    ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->input_desc));
-    ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->output_desc));
-    ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->bnScaleBiasMeanVarDesc));
     if (data) {
+        ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->input_desc));
+        ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->output_desc));
+        ERROR_CHECK_MIOPEN_STATUS(miopenDestroyTensorDescriptor(data->bnScaleBiasMeanVarDesc));
+        if(!parameters[2]){
+            if(data->bnBias) {
+                cl_int err = clReleaseMemObject(data->bnBias);
+                if (err) return VX_FAILURE;
+            }
+        }
         ERROR_CHECK_STATUS(releaseGraphHandle(node, data->handle));
         delete data;
     }
@@ -149,7 +171,7 @@ static vx_status VX_CALLBACK uninitializeScaleLayer(vx_node node, const vx_refer
 vx_status publishScaleLayer(vx_context context)
 {
     // add kernel to the context with callbacks
-	vx_kernel kernel = vxAddUserKernel(context, "com.amd.nn_extension.scale_layer", VX_KERNEL_SCALE_LAYER_AMD, processScaleLayer, 4, validateScaleLayer, initializeScaleLayer, uninitializeScaleLayer);
+    vx_kernel kernel = vxAddUserKernel(context, "com.amd.nn_extension.scale_layer", VX_KERNEL_SCALE_LAYER_AMD, processScaleLayer, 4, validateScaleLayer, initializeScaleLayer, uninitializeScaleLayer);
     ERROR_CHECK_OBJECT(kernel);
 
     // enable OpenCL buffer access since the kernel_f callback uses OpenCL buffers instead of host accessible buffers
@@ -180,7 +202,7 @@ VX_API_ENTRY vx_node VX_API_CALL vxScaleLayer(vx_graph graph, vx_tensor inputs, 
             (vx_reference)bias,
             (vx_reference)output
         };
-		node = createNode(graph, VX_KERNEL_SCALE_LAYER_AMD, params, sizeof(params) / sizeof(params[0]));
+        node = createNode(graph, VX_KERNEL_SCALE_LAYER_AMD, params, sizeof(params) / sizeof(params[0]));
     }
     return node;
 }
