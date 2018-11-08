@@ -18,11 +18,15 @@
 #include <sstream>
 #include <QElapsedTimer>
 
-#define WINDOW_TITLE             "MIVision Viewer"
+#define WINDOW_TITLE             "Radeon MIVision Viewer"
 #define ICON_SIZE                64
 #define ICON_STRIDE              (ICON_SIZE + 8)
 #define INFCOM_RUNTIME_OPTIONS   ""
 #define HIERARCHY_PENALTY        0.2
+
+QString GPUNameString[4] = {"AMD Radeon Instinct", "AMD Radeon Instinct MI25", "AMD Radeon Instinct MI60", "AMD Radeon GPU"};
+QString CPUNameString[5] = {"Authentic AMD", "AMD EPYC \"NAPLES\"", "AMD EPYC \"ROME\"", "AMD Ryzen 7", "AMD Ryzen 5"};
+int CPUCores[8] = {1,2,4,8,16,32,64,128};
 
 inference_state::inference_state()
 {
@@ -75,6 +79,7 @@ inference_viewer::inference_viewer(QString serverHost, int serverPort, QString m
         QVector<QString> * dataLabels, QVector<QString> * dataHierarchy, QString dataFilename, QString dataFolder,
         int dimInput[3], int GPUs, int dimOutput[3], int maxImageDataSize,
         bool repeat_images, bool sendScaledImages, int sendFileName_, int topKValue,
+        int GPUNameIndex, int CPUNameIndex, int CPUCoresIndex,
         QWidget *parent) :
     QWidget(parent),
     ui(new Ui::inference_viewer),
@@ -99,6 +104,9 @@ inference_viewer::inference_viewer(QString serverHost, int serverPort, QString m
     state->sendScaledImages = sendScaledImages;
     state->sendFileName = sendFileName_;
     state->topKValue = topKValue;
+    state->GPUNameIndex = GPUNameIndex;
+    state->CPUNameIndex = CPUNameIndex;
+    state->CPUCoresIndex = CPUCoresIndex;
     progress.completed = false;
     progress.errorCode = 0;
     progress.repeat_images = repeat_images;
@@ -169,6 +177,7 @@ void inference_viewer::terminate()
             QThread::msleep(100);
         }
     }
+    state->performance.close();
     close();
 }
 
@@ -177,6 +186,9 @@ void inference_viewer::showPerfResults()
     state->performance.setModelName(state->modelName);
     state->performance.setStartTime(state->startTime);
     state->performance.setNumGPU(state->GPUs);
+    state->performance.setNumCPU(CPUCores[state->CPUCoresIndex]);
+    state->performance.setGPUName(GPUNameString[state->GPUNameIndex]);
+    state->performance.setCPUName(CPUNameString[state->CPUNameIndex]);
     state->performance.show();
 
 }

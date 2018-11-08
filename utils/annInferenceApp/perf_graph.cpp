@@ -31,9 +31,21 @@ void perf_graph::updateElapsedTime(QString elapsedTime)
 {
    ui->elapsedTime_label->setText(elapsedTime);
 }
+void perf_graph::setGPUName(QString GPUName)
+{
+   ui->GPUName_label->setText(GPUName);
+}
 void perf_graph::setNumGPU(int numGPU)
 {
    ui->GPU_lcdNumber->display(numGPU);
+}
+void perf_graph::setCPUName(QString CPUName)
+{
+   ui->CPUName_label->setText(CPUName);
+}
+void perf_graph::setNumCPU(int numCPU)
+{
+   ui->CPU_lcdNumber->display(numCPU);
 }
 void perf_graph::resetPerformanceView()
 {
