@@ -31,6 +31,8 @@ public slots:
      void updateElapsedTime(QString elapsedTime);
      void updateFPSValue(float fps);
      void updateTotalImagesValue(int images);
+     void GPU_dial_ValueChanged();
+     void CPU_dial_ValueChanged();
 };
 
 #endif // PERF_GRAPH_H
