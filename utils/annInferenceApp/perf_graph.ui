@@ -427,60 +427,10 @@ font: 75 24pt &quot;Ubuntu&quot;;</string>
     <string/>
    </property>
   </widget>
-  <widget class="QDial" name="GPU_dial">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>640</y>
-     <width>121</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(170, 170, 255);</string>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>16</number>
-   </property>
-   <property name="wrapping">
-    <bool>true</bool>
-   </property>
-   <property name="notchesVisible">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QDial" name="CPU_dial">
-   <property name="geometry">
-    <rect>
-     <x>750</x>
-     <y>640</y>
-     <width>121</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(85, 170, 255);</string>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>128</number>
-   </property>
-   <property name="wrapping">
-    <bool>true</bool>
-   </property>
-   <property name="notchesVisible">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QLabel" name="NGPU_label_2">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>360</x>
      <y>670</y>
      <width>81</width>
      <height>41</height>
@@ -497,7 +447,7 @@ font: 75 28pt &quot;Ubuntu&quot;;</string>
   <widget class="QLabel" name="NCPU_label_2">
    <property name="geometry">
     <rect>
-     <x>670</x>
+     <x>690</x>
      <y>670</y>
      <width>81</width>
      <height>41</height>
@@ -514,7 +464,7 @@ font: 75 28pt &quot;Ubuntu&quot;;</string>
   <widget class="QLCDNumber" name="GPU_control_lcdNumber">
    <property name="geometry">
     <rect>
-     <x>570</x>
+     <x>600</x>
      <y>670</y>
      <width>51</width>
      <height>41</height>
@@ -531,7 +481,7 @@ color: rgb(0, 0, 0);</string>
   <widget class="QLCDNumber" name="CPU_control_lcdNumber">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>930</x>
      <y>670</y>
      <width>51</width>
      <height>41</height>
@@ -543,6 +493,56 @@ color: rgb(0, 0, 0);</string>
    </property>
    <property name="digitCount">
     <number>2</number>
+   </property>
+  </widget>
+  <widget class="QSlider" name="GPU_horizontalSlider">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>680</y>
+     <width>150</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(170, 170, 255);</string>
+   </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
+   <property name="maximum">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="CPU_horizontalSlider">
+   <property name="geometry">
+    <rect>
+     <x>769</x>
+     <y>680</y>
+     <width>150</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 170, 0);</string>
+   </property>
+   <property name="minimum">
+    <number>0</number>
+   </property>
+   <property name="maximum">
+    <number>1</number>
+   </property>
+   <property name="pageStep">
+    <number>1</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
    </property>
   </widget>
  </widget>

@@ -8,11 +8,13 @@ perf_graph::perf_graph(QWidget *parent) :
     ui->setupUi(this);
     maxFPS = 0;
     ui->GPU_control_lcdNumber->display(1);
+    ui->GPU_horizontalSlider->setValue(1);
     ui->CPU_control_lcdNumber->display(1);
+    ui->CPU_horizontalSlider->setValue(1);
     connect(ui->close_pushButton, &QAbstractButton::clicked, this, &perf_graph::closePerformanceView);
     connect(ui->reset_pushButton, &QAbstractButton::clicked, this, &perf_graph::resetPerformanceView);
-    connect(ui->GPU_dial, &QDial::actionTriggered, this , &perf_graph::GPU_dial_ValueChanged);
-    connect(ui->CPU_dial, &QDial::actionTriggered, this , &perf_graph::CPU_dial_ValueChanged);
+    connect(ui->GPU_horizontalSlider, &QSlider::actionTriggered, this , &perf_graph::GPU_dial_ValueChanged);
+    connect(ui->CPU_horizontalSlider, &QSlider::actionTriggered, this , &perf_graph::CPU_dial_ValueChanged);
 }
 
 perf_graph::~perf_graph()
@@ -42,7 +44,7 @@ void perf_graph::setGPUName(QString GPUName)
 void perf_graph::setNumGPU(int numGPU)
 {
    ui->GPU_lcdNumber->display(numGPU);
-   ui->GPU_dial->setMaximum(numGPU);
+   ui->GPU_horizontalSlider->setMaximum(numGPU);
 }
 void perf_graph::setCPUName(QString CPUName)
 {
@@ -51,7 +53,7 @@ void perf_graph::setCPUName(QString CPUName)
 void perf_graph::setNumCPU(int numCPU)
 {
    ui->CPU_lcdNumber->display(numCPU);
-   ui->CPU_dial->setMaximum(numCPU);
+   ui->CPU_horizontalSlider->setMaximum(numCPU+1);
 }
 void perf_graph::resetPerformanceView()
 {
@@ -74,11 +76,11 @@ void perf_graph::updateTotalImagesValue(int images)
 }
 void perf_graph::GPU_dial_ValueChanged()
 {
-    int dialValue = ui->GPU_dial->value();
+    int dialValue = ui->GPU_horizontalSlider->value();
     ui->GPU_control_lcdNumber->display(dialValue);
 }
 void perf_graph::CPU_dial_ValueChanged()
 {
-    int dialValue = ui->CPU_dial->value();
+    int dialValue = ui->CPU_horizontalSlider->value();
     ui->CPU_control_lcdNumber->display(dialValue);
 }
