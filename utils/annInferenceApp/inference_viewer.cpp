@@ -19,7 +19,7 @@
 #include <QElapsedTimer>
 
 #define WINDOW_TITLE             "Radeon MIVision Viewer"
-#define ICON_SIZE                64
+#define ICON_SIZE                256
 #define ICON_STRIDE              (ICON_SIZE + 8)
 #define INFCOM_RUNTIME_OPTIONS   ""
 #define HIERARCHY_PENALTY        0.2
